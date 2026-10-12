@@ -331,7 +331,7 @@ rw     <= 0;
     wire [15:0] in_cmd_data_in      = (in_cmd_address_bit < (f_rw ? $bits(rw) : $bits(ro))) ? (f_rw ? rw[in_cmd_address_bit+:16] : ro[in_cmd_address_bit+:16]) : 16'h0000;
     wire        in_cmd_read         = in_dout[12] & in_valid;
     wire        in_cmd_write        = in_dout[13] & in_cmd_address_byte[15] & in_valid;
-    wire        pcie_cfg_rw_en      = rwi_cfg_mgmt_rd_en | rwi_cfg_mgmt_wr_en | rw[RWPOS_CFG_RD_EN] | rw[RWPOS_CFG_WR_EN];
+        wire        pcie_cfg_rw_en      = rwi_cfg_mgmt_rd_en | rwi_cfg_mgmt_wr_en | rw[RWPOS_CFG_RD_EN] | rw[RWPOS_CFG_WR_EN];
     // in_rden = request data from incoming fifo. Only do this if there is space
     // in the output fifo and every 2nd clock cycle (in case a resulting write
     // starts an action that will last longer than a single clock there must be
@@ -368,26 +368,41 @@ rw     <= 0;
                     else begin
                         rwi_count_cfgspace_status_cl <= 0;
                         rw[RWPOS_CFG_WR_EN] <= 1'b1;
-                        rw[143:128] <= 16'h0007;                            // cfg_mgmt_di: command register [update to set individual command register bits]
-                        rw[159:144] <= 16'hff00;                            // cfg_mgmt_di: status register [do not update]
+                        rw[143:128] <= 16'h0007;                            // cfg_mgmt_di: command register
+                        rw[159:144] <= 16'hff00;                            // cfg_mgmt_di: status register
                         rw[169:160] <= 1;                                   // cfg_mgmt_dwaddr
                         rw[170]     <= 0;                                   // cfg_mgmt_wr_readonly
                         rw[171]     <= 0;                                   // cfg_mgmt_wr_rw1c_as_rw
-                        rw[172]     <= rw[RWPOS_CFG_CFGSPACE_COMMAND_EN];   // cfg_mgmt_byte_en: command register
-                        rw[173]     <= rw[RWPOS_CFG_CFGSPACE_COMMAND_EN];   // cfg_mgmt_byte_en: command register
-                        rw[174]     <= 0;                                   // cfg_mgmt_byte_en: status register
-                        rw[175]     <= rw[RWPOS_CFG_CFGSPACE_STATUS_CL_EN]; // cfg_mgmt_byte_en: status register
+                        rw[172]     <= rw[RWPOS_CFG_CFGSPACE_COMMAND_EN];   // cfg_mgmt_byte_en
+                        rw[173]     <= rw[RWPOS_CFG_CFGSPACE_COMMAND_EN];   // cfg_mgmt_byte_en
+                        rw[174]     <= 0;                                   // cfg_mgmt_byte_en
+                        rw[175]     <= rw[RWPOS_CFG_CFGSPACE_STATUS_CL_EN]; // cfg_mgmt_byte_en
                     end
 
-                // CONFIG SPACE READ/WRITE                        
+                // CONFIG SPACE READ/WRITE + EMULAÇÃO DO SEU HARDWARE
                 if ( ctx.cfg_mgmt_rd_wr_done )
                     begin
                         rwi_cfg_mgmt_rd_en  <= 1'b0;
                         rwi_cfg_mgmt_wr_en  <= 1'b0;
                         rwi_cfgrd_valid     <= 1'b1;
                         rwi_cfgrd_addr      <= ctx.cfg_mgmt_dwaddr;
-                        rwi_cfgrd_data      <= ctx.cfg_mgmt_do;
                         rwi_cfgrd_byte_en   <= ctx.cfg_mgmt_byte_en;
+
+                        // Modificação: Identidade Intel 7260 e MAC CC-3D-82-B6-9E-C3
+                        if ( ctx.cfg_mgmt_dwaddr == 10'h000 )
+                            rwi_cfgrd_data <= 32'h08B18086;
+                        else if ( ctx.cfg_mgmt_dwaddr == 10'h011 )
+                            rwi_cfgrd_data <= 32'hC4708086;
+                        else if ( ctx.cfg_mgmt_dwaddr == 10'h002 )
+                            rwi_cfgrd_data <= 32'h02800003;
+                        else if ( ctx.cfg_mgmt_dwaddr == 10'h03A )
+                            rwi_cfgrd_data <= 32'hFFFF823D;
+                        else if ( ctx.cfg_mgmt_dwaddr == 10'h03B )
+                            rwi_cfgrd_data <= 32'hC39EB6FF;
+                        else if ( ctx.cfg_mgmt_dwaddr == 10'h01A )
+                            rwi_cfgrd_data <= 32'h00000008;
+                        else
+                            rwi_cfgrd_data <= ctx.cfg_mgmt_do;
                     end
                 else if ( rw[RWPOS_CFG_RD_EN] )
                     begin
@@ -403,22 +418,22 @@ rw     <= 0;
                     end
                     
                 // STATIC_TLP TRANSMIT
-                if ( (rwi_tlp_static_valid && rwi_tlp_static_2nd) || ~rw[RWPOS_CFG_STATIC_TLP_TX_EN] ) begin    // STATE (3)
+                if ( (rwi_tlp_static_valid && rwi_tlp_static_2nd) || ~rw[RWPOS_CFG_STATIC_TLP_TX_EN] ) begin
                     rwi_tlp_static_valid    <= 1'b0;
                     rwi_tlp_static_has_data <= 1'b0;
                 end
-                else if ( rwi_tlp_static_has_data && tlps_static.tready && rwi_tlp_static_2nd ) begin  // STATE (1)
+                else if ( rwi_tlp_static_has_data && tlps_static.tready && rwi_tlp_static_2nd ) begin
                      rwi_tlp_static_valid   <= 1'b1;
                      rwi_tlp_static_2nd     <= 1'b0;
                 end
-                else if ( rwi_tlp_static_has_data && tlps_static.tready && !rwi_tlp_static_2nd ) begin // STATE (2)
+                else if ( rwi_tlp_static_has_data && tlps_static.tready && !rwi_tlp_static_2nd ) begin
                      rwi_tlp_static_valid   <= 1'b1;
                      rwi_tlp_static_2nd     <= 1'b1;
                 end
-                else if ( ((tickcount64[0+:16] & rw[240+:16]) == rw[240+:16]) & (rw[640+:32] > 0) & rw[224+2*0] ) begin   // IDLE STATE (0)
+                else if ( ((tickcount64[0+:16] & rw[240+:16]) == rw[240+:16]) & (rw[640+:32] > 0) & rw[224+2*0] ) begin
                     rwi_tlp_static_has_data <= 1'b1;
                     rwi_tlp_static_2nd      <= 1'b1;
-                    rw[640+:32] <= rw[640+:32] - 1;     // count - 1
+                    rw[640+:32] <= rw[640+:32] - 1;
                     if ( rw[640+:32] == 32'h00000001 )
                         rw[RWPOS_CFG_STATIC_TLP_TX_EN] <= 1'b0;
                 end
@@ -426,3 +441,4 @@ rw     <= 0;
             end
     
 endmodule
+
