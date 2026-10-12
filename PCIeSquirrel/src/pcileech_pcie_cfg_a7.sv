@@ -214,10 +214,14 @@ module pcileech_pcie_cfg_a7(
             // DSN
             rw[127:64]  <= 64'h0000000101000A35;    // +008: cfg_dsn
             // PCIe CFG MGMT
-            rw[159:128] <= 0;                       // +010: cfg_mgmt_di
-            rw[169:160] <= 0;                       // +014: cfg_mgmt_dwaddr
-            rw[170]     <= 0;                       //       cfg_mgmt_wr_readonly
-            rw[171]     <= 0;                       //       cfg_mgmt_wr_rw1c_as_rw
+            // Identidade Customizada 1:1 - Emulação Intel Dual Band Wireless-AC 7260 com ajuste para AMD
+rw[159:128] <= (rw[169:160] == 10'h000) ? 32'h08B18086 : // Vendor ID: 8086 | Device ID: 08B1
+               (rw[169:160] == 10'h011) ? 32'hC4708086 : // Subsystem Vendor ID: 8086 | Subsystem ID: C470
+               (rw[169:160] == 10'h01A) ? 32'h00000008 : // Força o Max Payload Size para 128 bytes no AMD
+               32'h00000000;
+rw[169:160] <= 0;
+rw     <= 0;
+rw     <= 0;
             rw[175:172] <= 4'hf;                    //       cfg_mgmt_byte_en
             // PCIe PL PHY
             rw[176]     <= 0;                       // +016: pl_directed_link_auton
