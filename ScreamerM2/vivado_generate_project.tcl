@@ -129,9 +129,6 @@ set files [list \
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-# Set 'sources_1' fileset file properties for remote files
-# None
-
 # Set 'sources_1' fileset file properties for local files
 set file "src/pcileech_header.svh"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -193,8 +190,6 @@ set files [list \
  [file normalize "${origin_dir}/ip/bram_pcie_cfgspace.xci" ]\
 ]
 set imported_files [import_files -fileset sources_1 $files]
-# Set 'sources_1' fileset file properties for remote files
-# None
 # Set 'sources_1' fileset file properties for local files
 set file "bram_pcie_cfgspace/bram_pcie_cfgspace.xci"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -212,19 +207,16 @@ set files [list \
  [file normalize "${origin_dir}/ip/drom_pcie_cfgspace_writemask.xci"]\
 ]
 set imported_files [import_files -fileset sources_1 $files]
-# Set 'sources_1' fileset file properties for remote files
-# None
 # Set 'sources_1' fileset file properties for local files
 set file "drom_pcie_cfgspace_writemask/drom_pcie_cfgspace_writemask.xci"
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
 set_property -name "registered_with_manager" -value "1" -objects $file_obj
 if { ![get_property "is_locked" $file_obj] } {
-set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
 }
 
-Set 'sources_1' fileset object
-
+# Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 
 Import local files from the original project
@@ -634,9 +626,6 @@ Set 'sim_1' fileset object
 
 set obj [get_filesets sim_1]
 
-Empty (no sources present)
-
-
 Set 'sim_1' fileset properties
 
 set obj [get_filesets sim_1]
@@ -649,13 +638,6 @@ Upgrade IP from the currently installed Vivado version
 upgrade_ip [get_ips *]
 
 Set 'utils_1' fileset object
-
-set obj [get_filesets utils_1]
-
-Empty (no sources present)
-
-
-Set 'utils_1' fileset properties
 
 set obj [get_filesets utils_1]
 
