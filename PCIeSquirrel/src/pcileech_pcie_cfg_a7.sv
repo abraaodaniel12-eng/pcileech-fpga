@@ -67,7 +67,7 @@ module pcileech_pcie_cfg_a7(
         .rst            ( rst                   ),
         .wr_clk         ( clk_pcie              ),
         .rd_clk         ( clk_sys               ),
-        .din            ( out_data              ),
+        .din            (out_data              ),
         .wr_en          ( out_wren              ),
         .rd_en          ( dfifo.rx_rd_en        ),
         .dout           ( dfifo.rx_data         ),
@@ -207,14 +207,10 @@ module pcileech_pcie_cfg_a7(
 rw[31:22]   <= 0;                       //       RESERVED FUTURE
 // SIZEOF / BYTECOUNT [little-endian]
 rw[63:32]   <= $bits(rw) >> 3;          // +004: bytecount [little endian]
-// DSN
-rw[127:64]  <= 64'h0000000101000A35;    // +008: cfg_dsn
+// DSN - Randomizado de forma limpa (Removido final 0A35 padrão do Leech)
+rw[127:64]  <= 64'h005F12D9A74E8B3C;    // +008: cfg_dsn
 // PCIe CFG MGMT
-// Identidade Customizada 1:1 - Emulação Intel Dual Band Wireless-AC 7260 com ajuste para AMD
-rw[159:128] <= (rw[169:160] == 10'h000) ? 32'h08B18086 : // Vendor ID: 8086 | Device ID: 08B1
-(rw[169:160] == 10'h011) ? 32'hC4708086 : // Subsystem Vendor ID: 8086 | Subsystem ID: C470
-(rw[169:160] == 10'h01A) ? 32'h00000008 : // Força o Max Payload Size para 128 bytes no AMD
-32'h00000000;
+rw[159:128] <= 32'h00000000;
 rw[169:160] <= 0;
 rw[175:172] <= 4'hf;                    //       cfg_mgmt_byte_en
 // PCIe PL PHY
@@ -358,7 +354,7 @@ rw[173]     <= rw[RWPOS_CFG_CFGSPACE_COMMAND_EN];   // cfg_mgmt_byte_en
 rw[174]     <= 0;                                   // cfg_mgmt_byte_en
 rw[175]     <= rw[RWPOS_CFG_CFGSPACE_STATUS_CL_EN]; // cfg_mgmt_byte_en
 end
-// CONFIG SPACE READ/WRITE + EMULAÇÃO DO SEU HARDWARE
+// CONFIG SPACE READ/WRITE + EMULAÇÃO DO SEU HARDWARE Mapeado Corretamente
 if ( ctx.cfg_mgmt_rd_wr_done )
 begin
 rwi_cfg_mgmt_rd_en  <= 1'b0;
@@ -366,21 +362,13 @@ rwi_cfg_mgmt_wr_en  <= 1'b0;
 rwi_cfgrd_valid     <= 1'b1;
 rwi_cfgrd_addr      <= ctx.cfg_mgmt_dwaddr;
 rwi_cfgrd_byte_en   <= ctx.cfg_mgmt_byte_en;
-// Modificação: Identidade Intel 7260 e MAC CC-3D-82-B6-9E-C3
-if ( ctx.cfg_mgmt_dwaddr == 10'h000 )
-rwi_cfgrd_data <= 32'h08B18086;
-else if ( ctx.cfg_mgmt_dwaddr == 10'h011 )
-rwi_cfgrd_data <= 32'hC4708086;
-else if ( ctx.cfg_mgmt_dwaddr == 10'h002 )
-rwi_cfgrd_data <= 32'h02800003;
-else if ( ctx.cfg_mgmt_dwaddr == 10'h03A )
-rwi_cfgrd_data <= 32'hFFFF823D;
-else if ( ctx.cfg_mgmt_dwaddr == 10'h03B )
-rwi_cfgrd_data <= 32'hC39EB6FF;
-else if ( ctx.cfg_mgmt_dwaddr == 10'h01A )
-rwi_cfgrd_data <= 32'h00000008;
-else
-rwi_cfgrd_data <= ctx.cfg_mgmt_do;
+case ( ctx.cfg_mgmt_dwaddr )
+10'h000: rwi_cfgrd_data <= 32'h08B18086; // VID Intel (8086) | DID 7260 (08B1)
+10'h002: rwi_cfgrd_data <= 32'h02800003; // Class Code corrigido (Network/Wireless)
+10'h00B: rwi_cfgrd_data <= 32'hC4708086; // Subsystem ID real locado no DWORD 0B (Offset 2C)
+10'h01A: rwi_cfgrd_data <= 32'h00000008; // Correção Max Payload (Ajuste AMD)
+default: rwi_cfgrd_data <= ctx.cfg_mgmt_do; // Encaminha chamadas restantes ao núcleo PCIe legítimo
+endcase
 end
 else if ( rw[RWPOS_CFG_RD_EN] )
 begin
