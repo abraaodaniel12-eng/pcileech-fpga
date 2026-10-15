@@ -234,12 +234,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_74_74_clk1_bar_rd1/fifo_74_74_clk1_bar_rd1.xci"
@@ -260,12 +254,6 @@ set files [list
 [file normalize "${origin_dir}/ip/bram_bar_zero4k.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -288,12 +276,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_134_134_clk1_bar_rdrsp/fifo_134_134_clk1_bar_rdrsp.xci"
@@ -314,12 +296,6 @@ set files [list
 [file normalize "${origin_dir}/ip/fifo_141_141_clk1_bar_wr.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -342,12 +318,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_134_134_clk2_rxfifo/fifo_134_134_clk2_rxfifo.xci"
@@ -368,12 +338,6 @@ set files [list
 [file normalize "${origin_dir}/ip/fifo_1_1_clk2.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -396,12 +360,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_134_134_clk2/fifo_134_134_clk2.xci"
@@ -422,12 +380,6 @@ set files [list
 [file normalize "${origin_dir}/ip/fifo_64_64_clk1_fifocmd.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -450,12 +402,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_256_32_clk2_comtx/fifo_256_32_clk2_comtx.xci"
@@ -476,12 +422,6 @@ set files [list
 [file normalize "${origin_dir}/ip/fifo_32_32_clk1_comtx.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -504,12 +444,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_129_129_clk1/fifo_129_129_clk1.xci"
@@ -530,12 +464,6 @@ set files [list
 [file normalize "${origin_dir}/ip/pcie_7x_0.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -558,12 +486,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_64_64/fifo_64_64.xci"
@@ -584,12 +506,6 @@ set files [list
 [file normalize "${origin_dir}/ip/fifo_32_32_clk2.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -612,12 +528,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_49_49_clk2/fifo_49_49_clk2.xci"
@@ -638,12 +548,6 @@ set files [list
 [file normalize "${origin_dir}/ip/fifo_43_43_clk2.xci"]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
@@ -666,12 +570,6 @@ set files [list
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
-
 Set 'sources_1' fileset file properties for local files
 
 set file "fifo_34_34/fifo_34_34.xci"
@@ -692,12 +590,6 @@ set files [list
 [file normalize "${origin_dir}/ip/fifo_64_64_clk2_comrx.xci" ]
 ]
 set imported_files [import_files -fileset sources_1 $files]
-
-Set 'sources_1' fileset file properties for remote files
-
-
-None
-
 
 Set 'sources_1' fileset file properties for local files
 
